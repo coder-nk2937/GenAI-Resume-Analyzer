@@ -6,7 +6,7 @@ import time
 load_dotenv()
 app = Flask(__name__)
 
-MODEL_NAME = "gemini-3.6-flash"
+MODEL_NAME = "gemini-2.5-flash"
 
 
 for attempt in range(3):
