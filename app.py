@@ -2,26 +2,10 @@ from flask import Flask, render_template, request, jsonify
 from google import genai
 from dotenv import load_dotenv
 import os
-import time
 load_dotenv()
 app = Flask(__name__)
 
 MODEL_NAME = "gemini-2.5-flash"
-
-
-for attempt in range(3):
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt
-        )
-        break
-
-    except Exception as e:
-        if "503" in str(e) and attempt < 2:
-            time.sleep(2 ** attempt)
-        else:
-            raise
 
 PROMPT_TEMPLATE = """
 Analyze the following resume.
