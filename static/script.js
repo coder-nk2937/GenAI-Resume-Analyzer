@@ -3,6 +3,7 @@ const charCount = document.getElementById("charCount");
 const analyzeBtn = document.getElementById("analyzeBtn");
 const clearBtn = document.getElementById("clearBtn");
 const copyBtn = document.getElementById("copyBtn");
+const downloadBtn = document.getElementById("downloadBtn");
 const result = document.getElementById("result");
 
 resumeText.addEventListener("input", () => {
@@ -19,6 +20,7 @@ clearBtn.addEventListener("click", () => {
         <p>Your resume insights will be displayed here after analysis.</p>
     `;
     copyBtn.disabled = true;
+    downloadBtn.disabled = true;
 });
 
 analyzeBtn.addEventListener("click", async () => {
@@ -41,6 +43,7 @@ analyzeBtn.addEventListener("click", async () => {
         <p>Please wait while Gemini extracts the information.</p>
     `;
     copyBtn.disabled = true;
+    
 
     try {
         const response = await fetch("/analyze", {
@@ -59,6 +62,7 @@ analyzeBtn.addEventListener("click", async () => {
         result.innerHTML = `<pre class="result-text"></pre>`;
         result.querySelector("pre").textContent = data.result || "No result returned.";
         copyBtn.disabled = false;
+        downloadBtn.disabled = false;
     } catch (error) {
         showError(error.message);
     } finally {
@@ -82,10 +86,62 @@ copyBtn.addEventListener("click", async () => {
     }
 });
 
+
+downloadBtn.addEventListener("click", () => {
+    const text = result.innerText.trim();
+
+    if (!text) {
+        alert("No analysis available to download.");
+        return;
+    }
+
+    const blob = new Blob([text], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "resume-analysis.txt";
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+});
+
+downloadBtn.addEventListener("click", () => {
+    const text = result.innerText.trim();
+
+    if (!text) {
+        alert("No analysis available to download.");
+        return;
+    }
+
+    const blob = new Blob([text], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "resume-analysis.txt";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+});
+
 function showError(message) {
-    result.className = "result-area";
+    result.className = "result-area";                
     result.innerHTML = `<div class="error-box"><strong>Analysis failed</strong><br>${escapeHtml(message)}</div>`;
     copyBtn.disabled = true;
+    
 }
 
 function escapeHtml(value) {
